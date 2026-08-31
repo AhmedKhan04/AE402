@@ -18,10 +18,13 @@ def main():
 
     velocity_vecs = state_vects[:3].T
     position_vecs = state_vects[3:].T
-    print(position_vecs[:-1])
+
+
+    
+    x, y, z = position_vecs.T[0], position_vecs.T[1], position_vecs.T[2]
     fig = plt.figure() 
     ax = fig.add_subplot(111, projection ="3d")
-    ax.plot(position_vecs[:,0], position_vecs[:,1], position_vecs[:,2])
+    ax.plot(x, y, z)
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
@@ -34,8 +37,8 @@ def main():
 
 
 def ODE(time, state):
-    r = state[3:]
     v = state[:3]
+    r = state[3:]
     r_dd = -mu*r/(R**3)
     r_d = v 
     return np.array([*r_dd, *r_d]) 
