@@ -7,7 +7,7 @@ import numpy as np
 # Givens: 
 Earth_Mu = 398600 # km^3/s^2
 R_earth = 6378 # km 
-r_p = 952 # km 
+r_p = 952  + R_earth# km 
 v_p = 8.256 #km/s
 # v = sqrt(Earth_Mu * (2/r - 1/a))
 
@@ -38,9 +38,10 @@ def altitude_at_f(a,e,f):
 
 def get_flight_path_angle(h, e, f): 
     vr = (Earth_Mu/h) * e*np.sin(np.radians(f))
-    v_perpindicular = (Earth_Mu/h) * e*np.sin(np.radians(f))
+    v_perpindicular = (Earth_Mu/h) * ( 1 + e*np.cos(np.radians(f)))
     flight_path_angle = np.atan2(vr, v_perpindicular)
-    return flight_path_angle
+    
+    return np.rad2deg(flight_path_angle)
 
 Telstar_a = a_from_vis_vis(v_p, r_p)
 Telstar_e = e_from_rp(r_p, Telstar_a)
@@ -50,11 +51,11 @@ Telstar_flight_angle = get_flight_path_angle(Telstar_h, Telstar_e, f=120)
 
 # Question 2 
 
-molniya_a = 26500
-molniya_e = 0.73
+molniya_a = 26500 # km 
+molniya_e = 0.73  
 
 
-# f = 90 degrees by definition of semi latus rectum 
+# f = 90 degrees by definition of semilatus rectum 
 
 molniya_f = 90 
 
@@ -73,7 +74,7 @@ def get_mean_angular_motion(a):
     return n 
 
 def get_time_change(M, n): 
-    return  M/n
+    return  (M/n) 
 
 molniya_E = get_ecentric_anomaly(molniya_e, molniya_f)
 molniya_M = get_Mean_anomaly(molniya_E, molniya_e)
@@ -83,36 +84,40 @@ molniya_time = get_time_change(molniya_M, molniya_n)
 
 # Question 3
 
-Mars_Mu = 42828
-R_mars = 3389 
+Mars_Mu = 42828 # km^3/s^2
+R_mars = 3389 # km 
 r_p_2 = 1650  + R_mars
 r_a_2 = 16680  + R_mars
 target_alt = r_a_2 
 
-
+# by definition of eccentricity 
 def get_eccentricity_mars(r_a, r_p):
     e = r_a - r_p
     e /= r_a + r_p 
     return e 
 
+# by definition of semimajor axis
 def get_semi_major_axis_mars(r_a, e): 
     a = r_a/(1+e)
     return a 
 
 
+# angular momentum equation
 def get_angular_momentum_mars(a, e):
     h = np.sqrt(Mars_Mu * a * (1-e**2))
     return h 
 
-
+# my period definition 
 def get_period_mars(a): 
     P = 2*np.pi * np.sqrt(a**3/Mars_Mu)
-    return P 
+    return P# seconds to min
 
+# definition of n 
 def get_mean_angular_motion_mars(a): 
     n = np.sqrt(Mars_Mu/a**3)
     return n  
 
+# we re-arrange the radius equation
 def get_anomoly_from_alt_mars(altitude, e, a): 
     r = altitude + R_mars
     r = r**-1 
@@ -121,24 +126,28 @@ def get_anomoly_from_alt_mars(altitude, e, a):
     r /= e 
     return np.acos(r)
 
+# eccentric anomoly defintiion
 def get_ecentric_anomoly_mars(e, true_anomoly): 
-    ec = np.sqrt(((1-e)/(1+e)) * np.tan(true_anomoly/2))
-    ec = np.atan2(ec,1) * 2 
+    ec = np.atan2(np.sqrt(1-e) * np.tan(true_anomoly/2), np.sqrt(1+e))  * 2 
     return ec 
 
+# mean anomoly defintiion
 def get_mean_anomoly_mars(e, E):
     M = E - e*np.sin(E)
     return M 
 
+# rearranging... M = (n)(dt)
 def get_time_on_true_anomoly_mars(n, M):
     dt = M/n
     return dt 
 
+
 def get_total_above_alt_time_mars(P, time_to_get_at_f): 
     # we consider the orbit symettircal 
-    # thus the time to get to a certain altittude is t, and the total time spent above it is P - 2t, where 2 accounts for the second half 
+    # thus the time to get to a certain altittude is t, and the total time spent above it is P - 2t
+    # thus the time is [t, P-t] where P is the period
 
-    return P - 2*time_to_get_at_f
+    return np.array([time_to_get_at_f, P - time_to_get_at_f])
 
 
 e_mars = get_eccentricity_mars(r_a=r_a_2, r_p=r_p_2)
@@ -153,8 +162,8 @@ dt_mars_4000 = get_time_on_true_anomoly_mars(n_mars, M_mars_4000)
 total_time_spent = get_total_above_alt_time_mars(P_mars, dt_mars_4000)
 
 Q1 = [Telstar_a, Telstar_e, Telstar_h, Telstar_alt, Telstar_flight_angle]
-Q2 = [molniya_E , molniya_M ,molniya_n , molniya_time]
-Q3 = [e_mars, a_mars, h_mars , P_mars , n_mars , f_mars_4000 , E_mars_4000, M_mars_4000, dt_mars_4000, total_time_spent]
+Q2 = [molniya_E , molniya_M ,molniya_n , molniya_time/60] # some seconds -> minutes conversions
+Q3 = [e_mars, a_mars, h_mars , P_mars/60 , n_mars , f_mars_4000 , E_mars_4000, M_mars_4000, dt_mars_4000/60, total_time_spent/60] # some seconds -> minutes conversions
 
 print("%" + "*"*50 + "%")
 print('Question 1 :')
@@ -172,3 +181,4 @@ for val in Q3:
     print(f"{val}\n")
 print("%" + "*"*50 + "%")
 
+# https://chatgpt.com/share/6aa6ee73-b7b8-83e9-a4d1-08909923de0a
