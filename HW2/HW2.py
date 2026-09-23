@@ -180,5 +180,8 @@ print('Question 3 :')
 for val in Q3: 
     print(f"{val}\n")
 print("%" + "*"*50 + "%")
-
+print(a_mars)
+print(P_mars)
+print(h_mars)
+print(E_mars_4000)
 # https://chatgpt.com/share/6aa6ee73-b7b8-83e9-a4d1-08909923de0a
