@@ -19,11 +19,11 @@ time = get_period(a_hohmann, 4*np.pi**2)/2 # since in au the mu is 4 * pi**2
 print(f"ideal hohmann transfer time: {time}") # years
 
 # From horizons: 
-v_jupiter = np.array([8.735858217794972E+00, 1.018311208188931E+01, 2.376836639257398E-01])
+v_jupiter = np.array([1.300549460195539e00, -9.883165034312524e00, 4.813490050639437e-01])
 
-v_pioneer = np.array([9.932952329859438E+00, 8.666883299603052E-01, 2.065630045751097E-01])
+r_jupiter = np.array([-1.925734664929881e06, 9.137231909342932e06, -6.294401986104711e05])
 
-v_inf = np.linalg.norm(v_jupiter - v_pioneer)
+v_inf = np.sqrt( np.linalg.norm(v_jupiter)**2 -  2 * mu_jupiter / (np.linalg.norm(r_jupiter)))
 print(f"v_inf: km/s: {v_inf}")
 
 radius_pariapsis_jupiter = p_closest + R_jupiter
