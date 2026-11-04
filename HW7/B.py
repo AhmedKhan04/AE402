@@ -10,18 +10,21 @@ Isp = 314.5
 def get_v_inf(v_current, mu, r_current): 
     return np.sqrt(v_current**2  - 2*mu/r_current)
 v_inf = get_v_inf(v_initial, mu, r_initial + R_moon)
-
+print(f"v_inf {v_inf}")
 
 R_p = R_moon + 111.3 
 def get_turn_angle(v_inf, R_p, mu):
     e = 1 + (R_p*v_inf**2)/mu 
 
     return 2*np.arcsin(e**-1)
-
+turn_angle = get_turn_angle(v_inf, R_p, mu)
+print(f"turn angle {(turn_angle)}")
 def get_delta_v(Isp, mf, m0):
     g0 = 9.81
     return Isp * g0 * np.log(m0/mf)
 
+delta_v_rocket = get_delta_v(Isp, 32675.7, 43572.8)
+print(f"delta v rocket {delta_v_rocket/1000}")
 
 def get_v_circular(mu, r_mag):
     return np.sqrt(mu/r_mag)
@@ -56,10 +59,10 @@ delta_v = v_final - v_initial
 print(f"delta v hohmann {delta_v * 1000}")
 
 v_at_landing = get_v_from_vis_viva(mu, a, r_p)
-print(f"delta v at landing {v_at_landing * 1000}")
+print(f"delta v at landing {v_at_landing}")
 
 def get_period(mu,a):
     return 2 * np.pi * np.sqrt(a**3/mu)
 
 time_to_landing = get_period(mu,a)/2 
-
+print(f"time to landing {time_to_landing}")

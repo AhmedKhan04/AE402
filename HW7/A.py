@@ -96,7 +96,7 @@ delta_v_real = get_delta_v(mass_real, Isp)
 print(f"delta v real {delta_v_real/1000}")
 r_earth_moon = np.array([-3.923817963190890E+05, 4.118232536241712E+04, -6.892403934792474E+02])
 r_earth_moon_mag = np.linalg.norm(r_earth_moon)
-
+print(f"distance to moon {r_earth_moon_mag}")
 def get_r_SOI(mass_ratio, a):
     return a * (mass_ratio/3)**(1/2)
 
